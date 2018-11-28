@@ -1,0 +1,13 @@
+{
+  "title" : "b file title",
+  "form" : {
+    "fields" : {
+      "name" : {
+        "label" : "What is DOB",
+        "errors" : {
+          "invalid" : "DOB is not valid"
+        }
+      }
+    }
+  }
+}

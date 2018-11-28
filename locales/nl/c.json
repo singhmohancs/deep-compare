@@ -1,0 +1,16 @@
+{
+  "title": "missing_key",
+  "form": {
+    "fields": {
+      "name": {
+        "label": "missing_key",
+        "errors": {
+          "invalid": "missing_key",
+          "maxLen": "missing_key",
+          "minLen": "missing_key",
+          "min1Len": "missing_key"
+        }
+      }
+    }
+  }
+}

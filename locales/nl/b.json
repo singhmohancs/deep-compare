@@ -1,0 +1,13 @@
+{
+  "title": "missing_key",
+  "form": {
+    "fields": {
+      "name": {
+        "label": "missing_key",
+        "errors": {
+          "invalid": "missing_key"
+        }
+      }
+    }
+  }
+}

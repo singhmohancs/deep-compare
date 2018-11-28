@@ -1,0 +1,31 @@
+{
+  "name": "deep-compare",
+  "version": "1.0.0",
+  "description": "Compare JSON files, create new file from default file, update keys in JSON",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/singhmohancs/deep-compare.git"
+  },
+  "keywords": [
+    "compare json files",
+    "compare directory",
+    "deep compare json files",
+    "add missing key in json "
+  ],
+  "author": "Mohan Singh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/singhmohancs/deep-compare/issues"
+  },
+  "homepage": "https://github.com/singhmohancs/deep-compare#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "deep-keys": "^0.5.0",
+    "lodash": "^4.17.11"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "title" : "c file title",
+  "form" : {
+    "fields" : {
+      "name" : {
+        "label" : "What is your birth place?",
+        "errors" : {
+          "invalid" : "Birthplace is not valid",
+          "maxLen" : "Length should not be greater than 6",
+          "min1Len" : "Length should not be less than 6"
+        }
+      }
+    }
+  }
+}

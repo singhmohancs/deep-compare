@@ -1,0 +1,14 @@
+{
+  "title" : "a file title",
+  "form" : {
+    "fields" : {
+      "name" : {
+        "label" : "What is your name?",
+        "errors" : {
+          "invalid" : "Name is not valid",
+          "maxLen" : "Length should not be greater than 6"
+        }
+      }
+    }
+  }
+}
