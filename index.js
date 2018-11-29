@@ -1,13 +1,12 @@
 const deepKeys = require('deep-keys');
 const fs = require('fs');
-const chalk = require('chalk');
 const { isEmpty, set, cloneDeep, difference, endsWith, toLower } = require('lodash');
 const defaultOptions = {
   basePath: '', //required
   defaultDir: '', //optional
-  compareWith: []
+  compareWith: [],
+  createUpdate: false
 };
-
 
 /**
  * @name compareDirectory
@@ -22,12 +21,12 @@ const defaultOptions = {
 function compareDirectory(options) {
   options = Object.assign({}, defaultOptions, options);
   const compareLogs = {};
-  const { basePath, defaultDir, compareWith } = options;
+  const { basePath, defaultDir, compareWith, createUpdate } = options;
   const comparator = defaultDir || compareWith[0];
   let defaultDirFiles
 
   !defaultDir && compareWith.splice(0, 1);
-  
+
   // Return new promise 
   return new Promise(function (resolve) {
     try {
@@ -41,12 +40,12 @@ function compareDirectory(options) {
     }
 
     compareWith.forEach((file, idx) => {
-      process.stdout.write('\n\n' + chalk.blue('************* File - ' + file + ' *****************') + '\n\n');
       const logs = compareFile({
         compareWith: file,
         defaultDirFiles: defaultDirFiles,
         localesBasePath: basePath,
-        comparator
+        comparator,
+        createUpdate: createUpdate
       });
       Object.assign(compareLogs, {
         [file]: logs
@@ -57,7 +56,7 @@ function compareDirectory(options) {
 }
 
 function compareFile(options) {
-  const { compareWith, defaultDirFiles, localesBasePath, comparator } = options;
+  const { compareWith, defaultDirFiles, localesBasePath, comparator, createUpdate } = options;
   const logs = [];
   defaultDirFiles.forEach(file => {
     const f1 = fs.readFileSync(`${localesBasePath}/${comparator}/${file}`, 'utf8');
@@ -72,53 +71,43 @@ function compareFile(options) {
         f2_keys
       );
 
-      if (compareLogs.length === 0) {
-        let l = file + ' [Found]';
-        process.stdout.write(chalk.green(l) + '\n');
-      } else {
-        let msg = file + ' [Not found] (missing Keys) -> ';
-        let missingKeys = compareLogs.toString();
-        let l = chalk.red(msg) + missingKeys.toString() + '\n';
+      if (compareLogs.length > 0) {
         logs.push({
           file: file,
           missing_keys: missingKeys
         });
         /**
-         * run iterator on missing keys and add missing key in new file 
+         * create file if not found
+         * add new key if not found
          */
-        compareLogs.forEach(key => {
-          set(f2_content, key, 'missing_key');
-        });
-        //convert JSON Object to string
-        const updatedLocale = JSON.stringify(f2_content, null, 2);
-        //write json file
-        fs.writeFile(`${localesBasePath}/${compareWith}/${file}`, updatedLocale, { flag: "w" },
-          (sucess) => {
-            console.log('message', sucess);
-            !sucess ? process.stdout.write(`${chalk.red('Parsing Errors')} ---- ${compareWith} - ${file} \n`) : JSON.stringify(sucess);
+        if (createUpdate) {
+          /**
+           * run iterator on missing keys and add missing key in new file 
+          */
+          compareLogs.forEach(key => {
+            set(f2_content, key, 'missing_key');
           });
-
+          //convert JSON Object to string
+          const updatedLocale = JSON.stringify(f2_content, null, 2);
+          //write json file
+          fs.writeFile(`${localesBasePath}/${compareWith}/${file}`, updatedLocale, { flag: "w" });
+        }
       }
     } catch (e) {
-      let msg = file + '  [Not found] (file not found) -> ';
       let errorMsg = e.toString();
-      let l = chalk.red(msg) + errorMsg + '\n';
-      process.stdout.write(l);
       logs.push({
         file: errorMsg,
         missing_keys: errorMsg
       });
-      const newLocaleFile = cloneDeep(f1_content);
-      f1_keys.forEach((key) => {
-        set(newLocaleFile, key, 'missing_key');
-      })
 
-      if (!isEmpty(newLocaleFile)) {
-        fs.writeFile(`${localesBasePath}/${compareWith}/${file}`, JSON.stringify(newLocaleFile, null, 2), { flag: "w" },
-          (error) => {
-            !error ? process.stdout.write(`${chalk.green('New file is created')} ---- /${compareWith} - ${file} \n`) : JSON.stringify(error);
-          });
+      if (createUpdate) {
+        const newLocaleFile = cloneDeep(f1_content);
+        f1_keys.forEach((key) => {
+          set(newLocaleFile, key, 'missing_key');
+        })
+        !isEmpty(newLocaleFile) && fs.writeFileSync(`${localesBasePath}/${compareWith}/${file}`, JSON.stringify(newLocaleFile, null, 2));
       }
+
     }
   });
   return logs;

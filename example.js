@@ -5,5 +5,7 @@ const localesDirs = ['en', 'nl'];
 
 deepCompare.directory({
   basePath : localesBasePath,
-  compareWith : localesDirs,
+  compareWith : localesDirs
+}).then(response=>{
+  console.log(response);
 });

@@ -6,7 +6,8 @@
         "label" : "What is your name?",
         "errors" : {
           "invalid" : "Name is not valid",
-          "maxLen" : "Length should not be greater than 6"
+          "maxLen" : "Length should not be greater than 6",
+          "maxMin" : "Length should not be greater than 6"
         }
       }
     }
