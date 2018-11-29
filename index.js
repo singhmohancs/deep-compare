@@ -96,7 +96,7 @@ function compareFile(options) {
     } catch (e) {
       let errorMsg = e.toString();
       logs.push({
-        file: errorMsg,
+        file: file,
         missing_keys: errorMsg
       });
 
