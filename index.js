@@ -168,7 +168,7 @@ class CompareDirectory {
         }
 
         if (this.debugLog && !isEmpty(errorMsg)) {
-          process.stdout.write(chalk.red(`${errorMsg}`));
+          process.stdout.write(chalk.red(`${errorMsg}`) + '\n');
         }
       }
     });
