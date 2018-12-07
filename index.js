@@ -12,7 +12,8 @@ const defaultOptions = {
   defaultDir: '', //optional
   compareWith: [],
   createUpdate: false,
-  key_placeholder: 'missing_key'
+  key_placeholder: 'missing_key',
+  debugLog:false
 };
 
 /**
@@ -40,6 +41,7 @@ class CompareDirectory {
     this.compareWith = options.compareWith;
     this.createUpdate = options.createUpdate;
     this.key_placeholder = options.key_placeholder;
+    this.debugLog = options.debugLog;
     /**
      * set defaultDir else first element is considered as compareWith
      * and remove first element
@@ -78,7 +80,7 @@ class CompareDirectory {
           return endsWith(toLower(file), '.json');
         });
       } catch (err) {
-        process.stdout.write(chalk.red(`directory not found ${this.comparator}`) + '\n\n');
+        this.debugLog && process.stdout.write(chalk.red(`directory not found ${this.comparator}`) + '\n\n');
         return;
       }
       this.compareWith.forEach((file) => {
@@ -131,7 +133,7 @@ class CompareDirectory {
             //write json file
             fs.writeFile(`${this.basePath}/${compareWith}/${file}`, updatedLocale, 'utf8', function (err) {
               if (err) {
-                err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
+                this.debugLog && err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
               }
             });
           }
@@ -157,12 +159,12 @@ class CompareDirectory {
           if (!isEmpty(newLocaleFile)) {
             fs.writeFile(`${this.basePath}/${compareWith}/${file}`, JSON.stringify(newLocaleFile, null, 2), 'utf8',
               (err) => {
-                err && process.stdout.write(chalk.red(err.toString()) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
+                this.debugLog && err && process.stdout.write(chalk.red(err.toString()) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
               });
           }
         }
 
-        if (!isEmpty(errorMsg)) {
+        if (this.debugLog && !isEmpty(errorMsg)) {
           process.stdout.write(chalk.red(`Parsing Error: ${errorMsg}`) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
         }
       }
