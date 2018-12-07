@@ -147,7 +147,7 @@ class CompareDirectory {
       } catch (e) {
         let errorMsg = e.toString();
         const isFile_404 = errorMsg && errorMsg.indexOf('no such file or directory') >= 0;
-        errorMsg = `${isFile_404 ? 'Not found' : 'Parsing Error'}: ${errorMsg}`;
+        errorMsg = `${isFile_404 ? 'Not found' : 'Parsing Error'} ${compareWith}/${file}: ${errorMsg}`;
 
         logs.push({
           file: file,
