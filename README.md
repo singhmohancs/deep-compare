@@ -67,4 +67,4 @@ Name  | Type | Description
 `defaultDir` | `string` | `optional` Directory and files are compared against this directory.
 `createUpdate` | `boolean` | `optional` Default: `false` if set to `true` then missing key and files are created. 
 `key_placeholder` | `string` | `optional` Default: `missing_key`. A placeholder value of missing key.
-
+`debugLog` | `boolean` | `optional` Default : `false`. If set to `true` then shows log

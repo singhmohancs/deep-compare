@@ -13,7 +13,7 @@ const defaultOptions = {
   compareWith: [],
   createUpdate: false,
   key_placeholder: 'missing_key',
-  debugLog:false
+  debugLog: false
 };
 
 /**
@@ -146,12 +146,15 @@ class CompareDirectory {
         }
       } catch (e) {
         let errorMsg = e.toString();
+        const isFile_404 = errorMsg && errorMsg.indexOf('no such file or directory') >= 0;
+        errorMsg = `${isFile_404 ? 'Not found' : 'Parsing Error'}: ${errorMsg}`;
+
         logs.push({
           file: file,
-          missing_keys: `Parsing Error: ${errorMsg}`
+          missing_keys: errorMsg
         });
 
-        if (this.createUpdate && isEmpty(errorMsg)) {
+        if (this.createUpdate && isFile_404) {
           const newLocaleFile = cloneDeep(f1_content);
           f1_keys.forEach((key) => {
             set(newLocaleFile, key, this.key_placeholder);
@@ -165,7 +168,7 @@ class CompareDirectory {
         }
 
         if (this.debugLog && !isEmpty(errorMsg)) {
-          process.stdout.write(chalk.red(`Parsing Error: ${errorMsg}`) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
+          process.stdout.write(chalk.red(`${errorMsg}`));
         }
       }
     });
