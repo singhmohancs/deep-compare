@@ -146,7 +146,7 @@ class CompareDirectory {
         let errorMsg = e.toString();
         logs.push({
           file: file,
-          missing_keys: errorMsg
+          missing_keys: `Parsing Error: ${errorMsg}`
         });
 
         if (this.createUpdate) {
