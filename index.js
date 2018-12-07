@@ -131,11 +131,11 @@ class CompareDirectory {
             //write json file
             fs.writeFile(`${this.basePath}/${compareWith}/${file}`, updatedLocale, 'utf8', function (err) {
               if (err) {
-               err &&  process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
+                err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
               }
             });
           }
-          
+
           logs.push({
             file: file,
             missing_keys: missingKeys
@@ -149,7 +149,7 @@ class CompareDirectory {
           missing_keys: `Parsing Error: ${errorMsg}`
         });
 
-        if (this.createUpdate) {
+        if (this.createUpdate && isEmpty(errorMsg)) {
           const newLocaleFile = cloneDeep(f1_content);
           f1_keys.forEach((key) => {
             set(newLocaleFile, key, this.key_placeholder);
@@ -157,9 +157,13 @@ class CompareDirectory {
           if (!isEmpty(newLocaleFile)) {
             fs.writeFile(`${this.basePath}/${compareWith}/${file}`, JSON.stringify(newLocaleFile, null, 2), 'utf8',
               (err) => {
-                err && process.stdout.write(chalk.red(err.toString()) +`-- ${this.basePath}/${compareWith}/${file} ---`+ '\n');
+                err && process.stdout.write(chalk.red(err.toString()) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
               });
           }
+        }
+
+        if (!isEmpty(errorMsg)) {
+          process.stdout.write(chalk.red(`Parsing Error: ${errorMsg}`) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
         }
       }
     });
