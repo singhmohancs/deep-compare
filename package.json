@@ -1,6 +1,6 @@
 {
   "name": "deep-compare-json",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Compare JSON files, create new file from default file, update keys in JSON",
   "main": "index.js",
   "scripts": {
