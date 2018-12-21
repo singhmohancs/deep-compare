@@ -174,6 +174,25 @@ class CompareDirectory {
     });
     return logs;
   }
+  /**
+   * @name createFile
+   * @description copy a file and update value of each key to this.options.key_placeholder. Default: missing_key
+   * 
+   * @returns void
+   */
+  createFile() {
+
+  }
+  /**
+   * @name createDirectory
+   * @description create a directory with given name and copy files from default directory
+   * @param {string} directory A name of directory that to be created.
+   * 
+   * @returns void
+   */
+  createDirectory() {
+
+  }
 
   //end of class
 }
