@@ -180,8 +180,16 @@ class CompareDirectory {
    * 
    * @returns void
    */
-  createFile() {
-
+  createFile(dir, fileName) {
+    const file = fs.readFileSync(`${this.basePath}/${this.comparator}/${fileName}`, 'utf8');
+    //convert JSON Object to string
+    const updatedFile = JSON.stringify(file, null, 2);
+    //write json file
+    fs.writeFile(`${this.basePath}/${dir}/${file}`, updatedFile, 'utf8', function (err) {
+      if (err) {
+        this.debugLog && err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
+      }
+    });
   }
   /**
    * @name createDirectory
@@ -190,20 +198,25 @@ class CompareDirectory {
    * 
    * @returns void
    */
-  createDirectory() {
-
+  createDirectory(name) {
+    const _directory = `${this.basePath}/${name}`;
+    if (!fs.existsSync(_directory)) {
+      fs.mkdirSync(_directory);
+    }
+    try {
+      defaultDirFiles = fs.readdirSync(`${this.basePath}/${this.comparator}`);
+      defaultDirFiles = defaultDirFiles.filter(file => {
+        return endsWith(toLower(file), '.json');
+      });
+      defaultDirFiles.forEach(file => {
+        console.log('file to be created', file);
+      });
+    } catch (err) {
+      this.debugLog && process.stdout.write(chalk.red(`directory not found ${this.comparator}`) + '\n\n');
+    }
   }
 
   //end of class
 }
 
-
-/**
- * exports module
- */
-module.exports = {
-  directory: (options) => {
-    const compareDir = new CompareDirectory(options);
-    return compareDir.fileComparator();
-  }
-};
+module.exports = CompareDirectory;

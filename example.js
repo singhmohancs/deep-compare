@@ -1,14 +1,21 @@
-const deepCompare = require('./index')
+const deepCompare = require('./index');
 const basePath = './files';
 const filesDirs = ['en', 'nl'];
 
 
-deepCompare.directory({
+const _compare = deepCompare({
   basePath: basePath,
   compareWith: filesDirs,
   createUpdate: false,
   defaultDir: 'en',
-  key_placeholder: 'demo_key'
-}).then(response => {
-  console.log(response);
+  key_placeholder: 'demo_key11'
 });
+
+
+// _compare
+//   .directory()
+//   .then(response => {
+//     console.log(response);
+//   });
+
+  _compare.createDirectory('demo');
