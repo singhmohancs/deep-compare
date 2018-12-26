@@ -6,7 +6,8 @@
         "label": "missing_key",
         "errors": {
           "invalid": "missing_key",
-          "maxLen": "missing_key"
+          "maxLen": "missing_key",
+          "min1Len": "missing_key_value"
         }
       }
     }

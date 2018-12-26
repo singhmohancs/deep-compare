@@ -214,4 +214,30 @@ class CompareDirectory {
   //end of class
 }
 
-module.exports = CompareDirectory;
+module.exports = {
+  compareFiles: (options) => {
+    Object.assign(options, {
+      createUpdate: false
+    });
+    const ins = new CompareDirectory(options);
+    return ins.fileComparator();
+  },
+  updateFiles: (options) => {
+    Object.assign(options, {
+      createUpdate: true
+    });
+    const ins = new CompareDirectory(options);
+    // true flag enables UPDATE/CREATE missing Keys in json files
+    return ins.fileComparator();
+  },
+  createDirectory: (options) => {
+    Object.assign(options, {
+      createUpdate: false
+    });
+    const ins = new CompareDirectory(options);
+    // true flag enables UPDATE/CREATE missing Keys in json files
+    return (name) => {
+      return ins.createDirectory(name);
+    };
+  }
+};
