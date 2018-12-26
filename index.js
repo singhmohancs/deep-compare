@@ -122,20 +122,8 @@ class CompareDirectory {
            * add new key if not found
            */
           if (this.createUpdate) {
-            /**
-             * run iterator on missing keys and add missing key in new file 
-            */
-            compareLogs.forEach(key => {
-              set(f2_content, key, this.key_placeholder);
-            });
-            //convert JSON Object to string
-            const updatedLocale = JSON.stringify(f2_content, null, 2);
-            //write json file
-            fs.writeFile(`${this.basePath}/${compareWith}/${file}`, updatedLocale, 'utf8', function (err) {
-              if (err) {
-                this.debugLog && err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
-              }
-            });
+            const newLocaleFile = cloneDeep(f2_content);
+            this.createFile(compareWith, file, newLocaleFile, compareLogs);
           }
 
           logs.push({
@@ -156,17 +144,8 @@ class CompareDirectory {
 
         if (this.createUpdate && isFile_404) {
           const newLocaleFile = cloneDeep(f1_content);
-          f1_keys.forEach((key) => {
-            set(newLocaleFile, key, this.key_placeholder);
-          })
-          if (!isEmpty(newLocaleFile)) {
-            fs.writeFile(`${this.basePath}/${compareWith}/${file}`, JSON.stringify(newLocaleFile, null, 2), 'utf8',
-              (err) => {
-                this.debugLog && err && process.stdout.write(chalk.red(err.toString()) + `-- ${this.basePath}/${compareWith}/${file} ---` + '\n');
-              });
-          }
+          this.createFile(compareWith, file, newLocaleFile, f1_keys);
         }
-
         if (this.debugLog && !isEmpty(errorMsg)) {
           process.stdout.write(chalk.red(`${errorMsg}`) + '\n');
         }
@@ -180,14 +159,26 @@ class CompareDirectory {
    * 
    * @returns void
    */
-  createFile(dir, fileName) {
-    const file = fs.readFileSync(`${this.basePath}/${this.comparator}/${fileName}`, 'utf8');
+  createFile(dir, fileName, fileContent = null, keysToUpdate = []) {
+    let jsObject, keys;
+    if (fileContent && keysToUpdate.length > 0) {
+      jsObject = fileContent;
+      keys = keysToUpdate;
+    } else {
+      const file = fs.readFileSync(`${this.basePath}/${this.comparator}/${fileName}`, 'utf8');
+      jsObject = JSON.parse(file);
+      keys = deepKeys(jsObject, true);
+    }
+
+    keys.forEach(key => {
+      set(jsObject, key, this.key_placeholder);
+    });
     //convert JSON Object to string
-    const updatedFile = JSON.stringify(file, null, 2);
+    const newFile = JSON.stringify(jsObject, null, 2);
     //write json file
-    fs.writeFile(`${this.basePath}/${dir}/${file}`, updatedFile, 'utf8', function (err) {
+    fs.writeFile(`${this.basePath}/${dir}/${fileName}`, newFile, 'utf8', (err) => {
       if (err) {
-        this.debugLog && err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${file} \n`)
+        this.debugLog && err && process.stdout.write(`${chalk.red('Parsing Errors')} ${err.toString()} ---- ${compareWith} - ${fileName} \n`)
       }
     });
   }
@@ -204,13 +195,17 @@ class CompareDirectory {
       fs.mkdirSync(_directory);
     }
     try {
-      defaultDirFiles = fs.readdirSync(`${this.basePath}/${this.comparator}`);
-      defaultDirFiles = defaultDirFiles.filter(file => {
-        return endsWith(toLower(file), '.json');
-      });
-      defaultDirFiles.forEach(file => {
-        console.log('file to be created', file);
-      });
+      //copy/create files if comparator/default directory is given
+      if (this.comparator) {
+        let defaultDirFiles = fs.readdirSync(`${this.basePath}/${this.comparator}`);
+        defaultDirFiles = defaultDirFiles.filter(file => {
+          return endsWith(toLower(file), '.json');
+        });
+        defaultDirFiles.forEach(file => {
+          this.createFile(name, file);
+        });
+      }
+
     } catch (err) {
       this.debugLog && process.stdout.write(chalk.red(`directory not found ${this.comparator}`) + '\n\n');
     }

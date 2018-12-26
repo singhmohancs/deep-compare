@@ -3,19 +3,21 @@ const basePath = './files';
 const filesDirs = ['en', 'nl'];
 
 
-const _compare = deepCompare({
+const _compare = new deepCompare({
   basePath: basePath,
   compareWith: filesDirs,
-  createUpdate: false,
+  createUpdate: true,
   defaultDir: 'en',
-  key_placeholder: 'demo_key11'
+  key_placeholder: 'missing_key_value'
 });
 
 
-// _compare
-//   .directory()
-//   .then(response => {
-//     console.log(response);
-//   });
+_compare
+  .fileComparator()
+  .then(response => {
+    console.log(response);
+  });
 
-  _compare.createDirectory('demo');
+
+  // Create a directory by given name and copy all files
+  // _compare.createDirectory('demo');
