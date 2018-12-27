@@ -1,7 +1,8 @@
-const deepKeys = require('deep-keys');
+const deepKeys = require('./deepCompare');
 const fs = require('fs');
 const chalk = require('chalk');
 const { isEmpty, set, cloneDeep, difference, endsWith, toLower, findIndex } = require('lodash');
+const {getValidKey } = require('./util');
 
 /**
   * default properties
@@ -171,7 +172,8 @@ class CompareDirectory {
     }
 
     keys.forEach(key => {
-      set(jsObject, key, this.key_placeholder);
+     const _key =  key.indexOf('\\.') >= 0 ? getValidKey(key) : key;
+      set(jsObject, _key, this.key_placeholder);
     });
     //convert JSON Object to string
     const newFile = JSON.stringify(jsObject, null, 2);
