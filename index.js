@@ -1,8 +1,8 @@
 const deepKeys = require('./deepCompare');
 const fs = require('fs');
 const chalk = require('chalk');
-const { isEmpty, set, cloneDeep, difference, endsWith, toLower, findIndex } = require('lodash');
-const {getValidKey } = require('./util');
+const { isEmpty, set, cloneDeep, difference, endsWith, toLower, findIndex, isObject, get } = require('lodash');
+const { getValidKey } = require('./util');
 
 /**
   * default properties
@@ -170,13 +170,14 @@ class CompareDirectory {
       jsObject = JSON.parse(file);
       keys = deepKeys(jsObject, true);
     }
-
+    const jsObject_a = cloneDeep(jsObject);
     keys.forEach(key => {
-     const _key =  key.indexOf('\\.') >= 0 ? getValidKey(key) : key;
-      set(jsObject, _key, this.key_placeholder);
+      const _key = key.indexOf('\\.') >= 0 ? getValidKey(key) : key;
+      const placeHolder = isObject(get(jsObject, _key)) ? {} : this.key_placeholder;
+      set(jsObject_a, _key, placeHolder);
     });
     //convert JSON Object to string
-    const newFile = JSON.stringify(jsObject, null, 2);
+    const newFile = JSON.stringify(jsObject_a, null, 2);
     //write json file
     fs.writeFile(`${this.basePath}/${dir}/${fileName}`, newFile, 'utf8', (err) => {
       if (err) {
